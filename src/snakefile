@@ -1,0 +1,279 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May  8 13:22:30 2023
+
+@author: 
+
+Sara Nazari
+Doctoral Candidate
+Leibniz Centre for Tropical Marine Research (ZMT)
+
+Fahrenheitstrasse 6; 28359 Bremen, Germany
+Phone: +49-421-23800-129
+Fax: +49-421-23800-30
+e-mail: sara.nazari@leibniz-zmt.de
+"""
+import numpy as np
+import pandas as pd
+import os     
+        
+Input_file_dir ='...' # Please enter the directory path to GG-R model.
+df_info = pd.read_csv(os.path.abspath(Input_file_dir)+'/Input_Info.csv')
+
+year = range(int(df_info.loc[0,'Input']), int(df_info.loc[1,'Input'])+1)
+
+first_year = int(df_info.loc[0,'Input'])
+last_year = int(df_info.loc[1,'Input'])
+df_time = pd.DataFrame({'Date':pd.date_range(str(first_year), str(last_year+1), freq='A')})
+Year = df_time.Date.dt.strftime('%Y')
+Year = Year.tolist()
+    
+
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/Meteo')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'))
+
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/Soil')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/Soil'))  
+    
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR'))
+
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/R_run')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/R_run'))
+
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/S_top')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/S_top'))   
+    
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/S_sub')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/S_sub'))
+    
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/R_sub')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/R_sub'))
+    
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/R_gw')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/R_gw'))
+    
+if not os.path.exists(os.path.abspath(df_info.loc[6,'Input']+'/GGR/CR')):
+    os.makedirs((os.path.abspath(df_info.loc[6,'Input'])+'/GGR/CR'))
+    
+rule Global_Groundwater_Recharge_Model:
+     params:
+        first_year = int(df_info.loc[0,'Input']),
+        last_year = int(df_info.loc[1,'Input']),
+        dir_Outputs = os.path.abspath(df_info.loc[6,'Input'])
+        
+     input:
+        # Input data
+        fn_S_TopSoil_Pre = os.path.abspath(df_info.loc[19,'Input']),
+        fn_S_SubSoil_Pre = os.path.abspath(df_info.loc[20,'Input']),
+                
+        fn_Sum_Pr_Smlt = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Sum_Pr_Smlt_mm_D_01012001_31122001.nc',
+        fn_TEva = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Teva_m_D_01012001_31122001.nc',
+
+        ## Soil Properties Data
+        ### TopSoil Properties
+        
+        fn_SWC_Max_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Max_TopSoil.nc',
+        fn_SWC_Min_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Min_TopSoil.nc',
+        fn_b = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/b_Parameter.nc',
+        fn_TopSoil_N = os.path.abspath(df_info.loc[15,'Input']), 
+        fn_TopSoil_Ksat = os.path.abspath(df_info.loc[16,'Input']), 
+        fn_TopSoil_tetaSat = os.path.abspath(df_info.loc[11,'Input']),
+        fn_TopSoil_tetaRes = os.path.abspath(df_info.loc[12,'Input']),
+        fn_Topsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/TopSoil_Thickness.nc',
+        
+        ### SubSoil Properties
+        fn_SWC_Max_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Max_SubSoil.nc',
+        fn_SWC_Min_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Min_SubSoil.nc',
+        fn_SubSoil_N = os.path.abspath(df_info.loc[17,'Input']),
+        fn_SubSoil_Ksat = os.path.abspath(df_info.loc[18,'Input']),
+        fn_SubSoil_tetaSat = os.path.abspath(df_info.loc[13,'Input']),
+        fn_SubSoil_tetaRes = os.path.abspath(df_info.loc[14,'Input']),
+        fn_Subsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SubSoil_Thickness.nc'
+
+     output:
+        fn_R_gw_1 = os.path.abspath(df_info.loc[6,'Input'])+'/GGR/R_gw'+'/R_gw_D_0101'+str(last_year)+'_3112'+str(last_year)+'.nc'
+
+     threads:
+         100
+     message: 
+         "now generating file {output} from rule Groundwater Recharge Model"
+        
+        
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/global_division.py'
+
+        
+rule IMERG_Rainfall_Prepration:
+    params:
+        year = lambda wildcards: int(wildcards.year),
+        dir_Daily_Pr = os.path.abspath(df_info.loc[2,'Input'])+'/IMERG_Daily_Precipitation_mm_'
+
+    input:
+        fn_Daily_Pr = os.path.abspath(df_info.loc[2,'Input'])+'/IMERG_Daily_Precipitation_mm_{year}0101.nc'
+
+    output:
+        fn_Pr = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Pr_mm_D_0101{year}_3112{year}.nc'
+    
+    message: 
+        "now generating {output} file from rule IMERG_Rainfall_Prepration"
+    
+    script:
+        os.path.abspath(df_info.loc[7,'Input'])+'/IMERG_Rainfall.py'
+
+
+rule TEva_Dimension_Modification:
+    input:
+         fn_Pr = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Pr_mm_D_0101{year}_3112{year}.nc',
+         fn_TEva_raw = os.path.abspath(df_info.loc[3,'Input'])+'/TEva_D_{year}.nc'
+         
+    
+    output:
+         fn_TEva_Dims = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Teva_Dims_modified_m_D_0101{year}_3112{year}.nc'
+         
+    
+    message:
+         "now generating file {output} from rule Teva_Dimension_Modification"
+    
+    script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/ERA5_TEva_Dims_modification.py'
+
+
+rule TEva_Deriving_from_Raw_Data:
+     input:
+         fn_TEva_Dims = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Teva_Dims_modified_m_D_0101{year}_3112{year}.nc'
+        
+     output:
+         fn_TEva = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Teva_m_D_0101{year}_3112{year}.nc'
+     
+     message: 
+         "now generating file {output} from rule Teva_Deriving_from_Raw_Data"
+    
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/Derive_Teva.py'
+
+
+rule Smlt_Dimension_Modification:
+     input:
+         fn_Pr = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Pr_mm_D_0101{year}_3112{year}.nc',
+         fn_Smlt_raw = os.path.abspath(df_info.loc[4,'Input'])+'/Smlt_D_{year}.nc'
+
+     output:
+         fn_smlt = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Smlt_m_D_0101{year}_3112{year}.nc'
+
+     message: 
+         "now generating file {output} from rule Smlt_Dimension_Modification"
+    
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/ERA5_Smlt_Dims_modification.py'
+
+
+rule Sum_Rainfall_Snowmelt:
+     input:
+         fn_Pr = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Pr_mm_D_0101{year}_3112{year}.nc',
+         fn_smlt =os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Smlt_m_D_0101{year}_3112{year}.nc',
+         World_Basin_Shape = os.path.abspath(df_info.loc[5,'Input'])
+     
+     output:
+         fn_Sum_Pr_Smlt = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Sum_Pr_Smlt_mm_D_0101{year}_3112{year}.nc'
+     
+     message: 
+         "now generating file {output} from rule Sum_Rainfall_Snowmelt"
+    
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/Sum_Pr_Smlt.py'
+
+rule Total_Throughfall:
+     input:
+         fn_Sum_Pr_Smlt = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Sum_Pr_Smlt_mm_D_0101{year}_3112{year}.nc',
+         fn_TEva = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Teva_m_D_0101{year}_3112{year}.nc',
+         World_Basin_Shape = os.path.abspath(df_info.loc[5,'Input'])
+     
+     output:
+         fn_Total_Throu = os.path.abspath(df_info.loc[6,'Input'])+'/Meteo'+'/Total_Throu_mm_D_0101{year}_3112{year}.nc'
+     
+     message: 
+         "now generating file {output} from rule Total_Throughfall"
+    
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/Total_Throughfall.py'
+
+
+
+rule Soil_Layers_Thickness:
+     input:
+         fn_Total_Depth = os.path.abspath(df_info.loc[8,'Input'])
+     output:         
+         fn_Topsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/TopSoil_Thickness.nc',
+         fn_Subsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SubSoil_Thickness.nc',
+         fn_Aquifer_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/Aquifer_thickness.nc'
+
+     message: 
+         "now generating file {output} from rule Soil_Layers_Thickness"
+        
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/Soil_layers_Thickness.py'
+
+
+
+rule Soil_moisture_shape_parameter:
+     input:
+         fn_topo_std = os.path.abspath(df_info.loc[9,'Input']),
+         fn_beta = os.path.abspath(df_info.loc[10,'Input']),
+         fn_Topsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/TopSoil_Thickness.nc'
+
+     output: 
+         fn_b = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/b_Parameter.nc'
+
+     message: 
+         "now generating file {output} from rule Soil_moisture_shape_parameter"
+        
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/b_Parameter.py'
+
+rule Topsoil_Properties:
+     input:
+         fn_TopSoil_tetaSat = os.path.abspath(df_info.loc[11,'Input']),
+         fn_TopSoil_tetaRes = os.path.abspath(df_info.loc[12,'Input']),
+         fn_Topsoil_Thickness = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/TopSoil_Thickness.nc'
+        
+     output:         
+         fn_WC_sat_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/WC_Sat_01degree_TopSoil.nc',
+         fn_WC_res_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/WC_Res_01degree_TopSoil.nc',
+         fn_SWC_Max_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Max_TopSoil.nc',
+         fn_SWC_Min_TopSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Min_TopSoil.nc'
+     message: 
+         "now generating file {output} from rule Topsoil_Properties"
+        
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/TopSoil_Properties.py'
+
+rule Subsoil_Properties:
+     input:
+         fn_SubSoil_tetaSat = os.path.abspath(df_info.loc[13,'Input']),
+         fn_SubSoil_tetaRes = os.path.abspath(df_info.loc[14,'Input']),
+         fn_Thickness_SubSoil =os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SubSoil_Thickness.nc'
+
+     output:         
+         fn_WC_sat_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/WC_Sat_01degree_SubSoil.nc',
+         fn_WC_res_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/WC_Res_01degree_SubSoil.nc',
+         fn_SWC_Max_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Max_SubSoil.nc',
+         fn_SWC_Min_SubSoil = os.path.abspath(df_info.loc[6,'Input'])+'/Soil'+'/SWC_Min_SubSoil.nc'
+    
+     message: 
+         "now generating file {output} from rule Subsoil_Properties"
+        
+     script:
+         os.path.abspath(df_info.loc[7,'Input'])+'/SubSoil_Properties.py'
+
+
+
+         
+
+
+
+
+
+
+         
