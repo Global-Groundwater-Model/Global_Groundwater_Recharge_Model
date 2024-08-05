@@ -9,7 +9,7 @@ The Global Groundwater Recharge (GGR) model is a Python-based grid model designe
 
 The default spatial and temporal setup of the model is as follows: spatial resolution of 0.1°×0.1° and daily temporal resolution. The model encompasses a spatial extent ranging from 180.0°W to 180.0°E longitudes and 60.0°N to 60.0°S latitudes, with a temporal range spanning from January 2001 to December 2020. 
 
-![Figure 1](figures/Figure1.png)
+![Figure 1](https://github.com/Global-Groundwater-Model/Global_Groundwater_Recharge_Model/blob/main/figures/Figure1.png)
 
 Fig. 1. The conceptual model of Global Groundwater Recharge (GGR). 
 
@@ -28,7 +28,7 @@ To run the Global Groundwater Recharge (GGR) model, you'll need a set of input d
 
 
 Table. 1. Overview of the Input Parameters Used in the GGR Model with the Abbreviation, Spatial and Temporal Resolutions, Unit, and Source.
-![Table 1](figures/Table1.png)
+![Table 1](https://github.com/Global-Groundwater-Model/Global_Groundwater_Recharge_Model/blob/main/figures/Table1.png)
 *These inputs must be rescaled to 0.1 degree resolution. 
 **These inputs are available in the Input folder. 
 
@@ -38,7 +38,7 @@ Before running the Snakefile, ensure you have prepared the Input_Info.csv file. 
 
 Additionally, you can visualize the workflow of the GGR model by examining the Snakemake rule graph, as illustrated in Figure. 2. This graph provides insights into the sequence of code execution within the GGR Model.
 
-![Figure 2](figures/Figure2.png)
+![Figure 2](https://github.com/Global-Groundwater-Model/Global_Groundwater_Recharge_Model/blob/main/figures/Figure2.png)
 
 ## Documentation
 
