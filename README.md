@@ -3,6 +3,8 @@
 
 Global Groundwater Recharge Model
 
+[![DOI](https://zenodo.org/badge/797320852.svg)](https://zenodo.org/doi/10.5281/zenodo.13222685)
+
 # Project Description
 
 The Global Groundwater Recharge (GGR) model is a Python-based grid model designed to simulate daily rain-fed groundwater recharge using satellite imagery and environmental parameters. Comprising three layers - topsoil (root zone), subsoil, and aquifer (refer to Fig. 1) - the GGR model computes various hydrological processes, including water exchange between topsoil and atmosphere, surface runoff, topsoil recharge, water volume in soil layers, subsoil recharge from topsoil, capillary rise from subsoil to topsoil, and groundwater recharge. These calculations are performed on a daily time step and grid-based values.
