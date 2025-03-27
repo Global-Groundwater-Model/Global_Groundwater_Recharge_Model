@@ -46,7 +46,7 @@ Additionally, you can visualize the workflow of the GGR model by examining the S
 
 For more detailed information on the GGR model and to cite the model, please refer to the following article:
 
-Nazari et al. (2024) "Spatiotemporal dynamics of global groundwater recharge from 2001 to 2020". Journal of Hydrology
+Nazari, S., Kurse, I., Moosdorf, N., "Spatiotemporal dynamics of global rain-fed groundwater recharge from 2001 to 2020. Journal of Hydrology. 650:132490.
 
 Please consider citing this article if you use the GGR model in your research or projects.
 
@@ -55,7 +55,6 @@ Please consider citing this article if you use the GGR model in your research or
 - [Amante, C., & Eakins, B. (2009). ETOPO1 1 arc-minute global relief model: procedures, data sources and analysis. NOAA technical memorandum NESDIS NGDC-24. National Geophysical Data Center, NOAA, 10(2009), V5C8276M.](https://doi.org/10.7289/V5C8276M) 
 
 - [Hagemann, S., & Gates, L. D. (2003). Improving a subgrid runoff parameterization scheme for climate models by the use of high resolution data derived from satellite observations. Climate Dynamics, 21(3), 349-359.](https://doi.org/10.1007/s00382-003-0349-x)
-
 - [Hengl, T., Mendes de Jesus, J., Heuvelink, G. B., Ruiperez Gonzalez, M., Kilibarda, M., Blagotić, A., Shangguan, W., Wright, M. N., Geng, X., & Bauer-Marschallinger, B. (2017). SoilGrids250m: Global gridded soil information based on machine learning. PloS one, 12(2), e0169748.](https://doi.org/10.1371/journal.pone.0169748) 
 
 - [Huffman, G. J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, Jackson Tan (2019). GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree V06, Edited by Andrey Savtchenko, Greenbelt, MD, Goddard Earth Sciences Data and Information Services Center (GES DISC).](https://doi.org/10.5067/GPM/IMERGDF/DAY/06)
@@ -65,7 +64,5 @@ Please consider citing this article if you use the GGR model in your research or
 - [Simons, G., Koster, R., & Droogers, P. (2020). HiHydroSoil v2. 0-High Resolution Soil Maps of Global Hydraulic Properties FutureWater report 134, Wageningen, The Netherlands.](https://www.futurewater.eu/projects/hihydrosoil/) 
 
 - [Stacke, T., & Hagemann, S. (2021). HydroPy (v1. 0): A new global hydrology model written in Python. Geoscientific Model Development Discussions, 1-28.](https://zenodo.org/records/4541239) 
-
-
 
 
