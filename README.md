@@ -46,7 +46,7 @@ Additionally, you can visualize the workflow of the GGR model by examining the S
 
 For more detailed information on the GGR model and to cite the model, please refer to the following article:
 
-Nazari, S., Kurse, I., Moosdorf, N., "Spatiotemporal dynamics of global rain-fed groundwater recharge from 2001 to 2020. Journal of Hydrology. 650:132490.
+Nazari, S., Kurse, I., Moosdorf, N.,2025."Spatiotemporal dynamics of global rain-fed groundwater recharge from 2001 to 2020. Journal of Hydrology. 650:132490.
 
 Please consider citing this article if you use the GGR model in your research or projects.
 
